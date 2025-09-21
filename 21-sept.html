@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Día de la Primavera</title>
+    <style>
+        :root {
+            --primary-color: #FFC0CB;
+            --secondary-color: #FFB703;
+            --text-color: #5D4037;
+            --frame-border-color: #c5a775;
+            --background-color: #FFF8E1;
+            --sunflower-center-color: #6D4C41;
+            --sunflower-petal-color: #FFD54F;
+            --stem-color-dark: #2E7D32;
+            --stem-color-light: #1B5E20;
+            --leaf-color: #4CAF50;
+            --leaf-color-dark: #388E3C;
+            --center-border-color: #FF9800;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'cursive', 'Segoe Script', sans-serif;
+            background-color: var(--background-color);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #initial-screen {
+            text-align: center;
+            color: var(--text-color);
+            transition: opacity 0.5s ease-out;
+        }
+
+        #initial-screen h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        #trigger-button {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-family: inherit;
+            color: white;
+            background-color: var(--secondary-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #trigger-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #main-content {
+            display: none;
+            justify-content: center;
+            align-items: flex-start; 
+            width: 100%;
+            height: 100%;
+            position: relative;
+            animation: fadeIn 1.5s ease-in-out;
+            padding-top: 5vh;
+        }
+
+        .photo-frame {
+            position: relative;
+            z-index: 10;
+            background-color: white;
+            padding: 20px;
+            border: 15px solid var(--frame-border-color);
+            border-image: linear-gradient(45deg, #d4af37, #c5a775, #b8860b) 1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 0, 0, 0.2) inset;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 320px; /* Un poco más ancho para que quepa bien el texto */
+            max-height: 80vh; /* Un poco más alto */
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-start; /* Alinea el contenido arriba */
+            align-items: center;
+            flex-direction: column; /* Apila la imagen y el texto verticalmente */
+            padding-bottom: 10px; /* Espacio para el texto */
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: auto; /* Permite que la altura se ajuste */
+            object-fit: contain;
+            display: block;
+            border-radius: 5px;
+            max-height: 55vh; /* Limita la altura de la imagen para dar espacio al texto */
+        }
+
+        .photo-frame .caption {
+            text-align: center;
+            padding: 15px 10px 5px 10px;
+            color: var(--text-color);
+            width: 100%;
+        }
+
+        .photo-frame .caption h2 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .flower-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .flower {
+            position: absolute;
+            top: -10%;
+            font-size: 2rem;
+            opacity: 0.8;
+            user-select: none;
+            animation: fall linear infinite;
+            --horizontal-drift: 20px;
+        }
+        
+        .sunflower-field {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25vh;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            z-index: 5;
+            padding: 0 5%;
+        }
+
+        .sunflower {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sunflower .head-stem-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform-origin: bottom center;
+            animation: sway 5s ease-in-out infinite alternate;
+        }
+
+        .sunflower .head-container {
+            position: relative; 
+            width: 80px; 
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: -15px;
+            z-index: 1;
+        }
+
+        .sunflower .head-container::before {
+            content: '';
+            position: absolute;
+            width: 53%;
+            height: 53%;
+            background-color: var(--center-border-color);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .sunflower .center {
+            width: 45%; 
+            height: 45%;
+            background-color: var(--sunflower-center-color);
+            border-radius: 50%;
+            z-index: 3;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+        }
+
+        .petal {
+            position: absolute;
+            width: 30%; 
+            height: 50%; 
+            top: 0;
+            left: 35%; 
+            z-index: 1;
+            transform-origin: bottom center;
+        }
+        
+        .petal::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%; 
+            background: radial-gradient(circle, var(--sunflower-petal-color), #FFC107);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; 
+            transform: rotate(-45deg); 
+            transform-origin: center;
+        }
+        
+        .sunflower .stem {
+            width: 8px;
+            background: linear-gradient(to bottom, var(--stem-color-dark), var(--stem-color-light));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            z-index: 0;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 50px; 
+            height: 35px; 
+            background: linear-gradient(to bottom right, var(--leaf-color), var(--leaf-color-dark));
+        }
+
+        .leaf.left {
+            bottom: 45px; 
+            left: 4px; 
+            border-radius: 0 80%; 
+            transform-origin: left center;
+            transform: rotate(-20deg); 
+            animation: leafSwayLeft 3s ease-in-out infinite alternate;
+        }
+
+        .leaf.right {
+            bottom: 25px; 
+            right: 4px; 
+            border-radius: 80% 0; 
+            transform-origin: right center;
+            transform: rotate(20deg); 
+            animation: leafSwayRight 3s ease-in-out infinite alternate;
+        }
+        
+        .sunflower:nth-of-type(1) { height: 120px; }
+        .sunflower:nth-of-type(1) .head-stem-wrapper { animation-duration: 4.5s; }
+        .sunflower:nth-of-type(1) .stem { height: 80px; }
+        .sunflower:nth-of-type(1) .leaf.left { bottom: 25px; }
+        .sunflower:nth-of-type(1) .leaf.right { bottom: 15px; }
+
+        .sunflower:nth-of-type(2) { height: 150px; }
+        .sunflower:nth-of-type(2) .head-stem-wrapper { animation-duration: 5.2s; animation-delay: 0.3s; }
+        .sunflower:nth-of-type(2) .head-container { width: 100px; height: 100px; }
+        .sunflower:nth-of-type(2) .stem { height: 110px; }
+        .sunflower:nth-of-type(2) .leaf { width: 45px; height: 30px; } 
+        
+        .sunflower:nth-of-type(3) { height: 110px; }
+        .sunflower:nth-of-type(3) .head-stem-wrapper { animation-duration: 4.8s; animation-delay: 0.6s; }
+        .sunflower:nth-of-type(3) .head-container { width: 70px; height: 70px; }
+        .sunflower:nth-of-type(3) .stem { height: 70px; }
+        .sunflower:nth-of-type(3) .leaf.left { bottom: 20px; }
+        .sunflower:nth-of-type(3) .leaf.right { bottom: 10px; }
+
+        .sunflower:nth-of-type(4) { height: 140px; }
+        .sunflower:nth-of-type(4) .head-stem-wrapper { animation-duration: 5.5s; animation-delay: 0.2s; }
+        .sunflower:nth-of-type(4) .stem { height: 100px; }
+
+        .sunflower:nth-of-type(5) { height: 125px; }
+        .sunflower:nth-of-type(5) .head-stem-wrapper { animation-duration: 4.3s; animation-delay: 0.8s; }
+        .sunflower:nth-of-type(5) .stem { height: 85px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fall {
+            0% { top: -10%; transform: translateX(0px) rotate(0deg); }
+            100% { top: 110%; transform: translateX(var(--horizontal-drift)) rotate(720deg); }
+        }
+        @keyframes sway {
+            0% { transform: rotateZ(-8deg); }
+            100% { transform: rotateZ(8deg); }
+        }
+        @keyframes leafSwayLeft {
+            0% { transform: rotate(-20deg); }
+            100% { transform: rotate(0deg); }
+        }
+        @keyframes leafSwayRight {
+            0% { transform: rotate(20deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        @media (max-width: 600px) {
+            #initial-screen h1 { font-size: 1.8rem; }
+            #trigger-button { padding: 12px 25px; font-size: 1.2rem; }
+            .photo-frame { 
+                padding: 15px; 
+                border-width: 10px; 
+                width: 90%; 
+                max-width: 280px;
+                max-height: 75vh;
+            }
+            .flower { font-size: 1.5rem; }
+            .sunflower .head-container { width: 60px; height: 60px; margin-bottom: -10px; }
+            .sunflower .stem { width: 5px; }
+            .sunflower .leaf { width: 35px; height: 25px; }
+            .sunflower:nth-of-type(2) .head-container { width: 75px; height: 75px; }
+            .sunflower:nth-of-type(3) .head-container { width: 50px; height: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="initial-screen">
+        <h1>🌻 Feliz Primavera Bebecita 🌻</h1>
+        <button id="trigger-button">Tócame 🫦</button>
+    </div>
+
+    <div id="main-content">
+        <div class="flower-container"></div>
+        <div class="photo-frame">
+            <img src="https://res.cloudinary.com/dvfntaopk/image/upload/IMG-20250916-WA0047_bqhkak.jpg" alt="Una foto especial para ti"> 
+            <div class="caption">
+                <h2>Toma tus flores amarillas 😌🌻</h2>
+            </div>
+        </div>
+        <div class="sunflower-field"></div>
+    </div>
+
+    <audio id="background-music" loop>
+        <source src="mi-cancion.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    
+    <script>
+        const triggerButton = document.getElementById('trigger-button');
+        const initialScreen = document.getElementById('initial-screen');
+        const mainContent = document.getElementById('main-content');
+        const backgroundMusic = document.getElementById('background-music');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const flowerContainer = document.querySelector('.flower-container');
+            const sunflowerField = document.querySelector('.sunflower-field');
+            const numberOfFlowers = 15;
+            const numberOfSunflowers = 5;
+
+            for (let i = 0; i < numberOfFlowers; i++) {
+                const flower = document.createElement('div');
+                flower.classList.add('flower');
+                flower.textContent = Math.random() > 0.5 ? '🌻' : '🌼';
+                flower.style.left = `${Math.random() * 100}vw`;
+                flower.style.animationDuration = `${Math.random() * 8 + 7}s`;
+                flower.style.animationDelay = `${Math.random() * 5}s`;
+                flower.style.fontSize = `${Math.random() * 1 + 1.2}rem`;
+                flower.style.setProperty('--horizontal-drift', `${Math.random() * 60 - 30}px`);
+                flowerContainer.appendChild(flower);
+            }
+
+            for (let i = 0; i < numberOfSunflowers; i++) {
+                const sunflower = document.createElement('div');
+                sunflower.className = 'sunflower';
+                const headStemWrapper = document.createElement('div');
+                headStemWrapper.className = 'head-stem-wrapper';
+                const headContainer = document.createElement('div');
+                headContainer.className = 'head-container';
+                const center = document.createElement('div');
+                center.className = 'center';
+                headContainer.appendChild(center);
+
+                for (let j = 0; j < 12; j++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    petal.style.transform = `rotate(${j * 30}deg)`;
+                    headContainer.appendChild(petal);
+                }
+
+                const stem = document.createElement('div');
+                stem.className = 'stem';
+                const leafLeft = document.createElement('div');
+                leafLeft.className = 'leaf left';
+                const leafRight = document.createElement('div');
+                leafRight.className = 'leaf right';
+                
+                stem.appendChild(leafLeft);
+                stem.appendChild(leafRight);
+                
+                headStemWrapper.appendChild(headContainer);
+                headStemWrapper.appendChild(stem);
+                sunflower.appendChild(headStemWrapper);
+                sunflowerField.appendChild(sunflower);
+            }
+        });
+
+        triggerButton.addEventListener('click', () => {
+            initialScreen.style.opacity = '0';
+            setTimeout(() => {
+                initialScreen.style.display = 'none';
+                mainContent.style.display = 'flex';
+                if (backgroundMusic) {
+                    backgroundMusic.play().catch(error => {
+                        console.log("La reproducción automática fue bloqueada por el navegador:", error);
+                    });
+                }
+            }, 500);
+        });
+        </script>
+</body>
+</html>
